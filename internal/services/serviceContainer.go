@@ -3,15 +3,21 @@ package services
 import (
 	"database/sql"
 
-	"github.com/ProtoSG/crypto-tracker-back/cmd/api/crypto/application"
+	cryptoApplication "github.com/ProtoSG/crypto-tracker-back/cmd/api/crypto/application"
+	historialPriceApplication "github.com/ProtoSG/crypto-tracker-back/cmd/api/historialPrice/application"
+	quoteApplication "github.com/ProtoSG/crypto-tracker-back/cmd/api/quote/application"
 )
 
 type ServiceContainer struct {
-	Crypto *application.CryptoService
+	Crypto         *cryptoApplication.CryptoService
+	Quote          *quoteApplication.QuoteService
+	HistorialPrice *historialPriceApplication.HistorialPriceService
 }
 
 func NewServiceContainer(db *sql.DB) *ServiceContainer {
 	return &ServiceContainer{
-		Crypto: application.NewCryptoService(db),
+		Crypto:         cryptoApplication.NewCryptoService(db),
+		Quote:          quoteApplication.NewQuoteService(db),
+		HistorialPrice: historialPriceApplication.NewHistorialPriceService(db),
 	}
 }
