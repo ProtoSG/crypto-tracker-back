@@ -67,7 +67,11 @@ func (this *CryptoController) ReadByID(w http.ResponseWriter, r *http.Request) {
 
 	crypto, err := this.serviceContainer.Crypto.ReadByID.Execute(id)
 	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err.Error())
+		if _, ok := err.(*utils.EntityNotFound); ok {
+			utils.WriteError(w, http.StatusNotFound, err.Error())
+		} else {
+			utils.WriteError(w, http.StatusInternalServerError, err.Error())
+		}
 		return
 	}
 
@@ -84,14 +88,18 @@ func (this *CryptoController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	crypto := domain.Crypto{}
+	crypto := &domain.Crypto{}
 	if err := utils.ReadJSON(r, crypto); err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	if err := this.serviceContainer.Crypto.Update.Execute(id, &crypto); err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err.Error())
+	if err := this.serviceContainer.Crypto.Update.Execute(id, crypto); err != nil {
+		if _, ok := err.(*utils.EntityNotFound); ok {
+			utils.WriteError(w, http.StatusNotFound, err.Error())
+		} else {
+			utils.WriteError(w, http.StatusInternalServerError, err.Error())
+		}
 		return
 	}
 
@@ -112,7 +120,11 @@ func (this *CryptoController) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := this.serviceContainer.Crypto.Delete.Execute(id); err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err.Error())
+		if _, ok := err.(*utils.EntityNotFound); ok {
+			utils.WriteError(w, http.StatusNotFound, err.Error())
+		} else {
+			utils.WriteError(w, http.StatusInternalServerError, err.Error())
+		}
 		return
 	}
 

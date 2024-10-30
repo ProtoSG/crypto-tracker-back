@@ -63,7 +63,7 @@ func (this *SqliteCryptoRepository) Read() ([]*domain.Crypto, error) {
 }
 
 func (this *SqliteCryptoRepository) ReadByID(id int) (*domain.Crypto, error) {
-	query := `SELECT * FROM crypto WHERE crypto.id = ?`
+	query := `SELECT * FROM crypto WHERE id_crypto = ?`
 
 	crypto := &domain.Crypto{}
 
@@ -85,7 +85,7 @@ func (this *SqliteCryptoRepository) ReadByID(id int) (*domain.Crypto, error) {
 }
 
 func (this *SqliteCryptoRepository) Update(crypto *domain.Crypto) error {
-	query := `UPDATE crypto SET name = ?, symbol = ?, slug = ?, circulating_supply = ?, cmc_rank = ?`
+	query := `UPDATE crypto SET name = ?, symbol = ?, slug = ?, circulating_supply = ?, cmc_rank = ? WHERE id_crypto = ?`
 
 	if _, err := this.db.Exec(
 		query,
@@ -94,6 +94,7 @@ func (this *SqliteCryptoRepository) Update(crypto *domain.Crypto) error {
 		crypto.Slug,
 		crypto.CirculatingSupply,
 		crypto.CmcRank,
+		crypto.ID,
 	); err != nil {
 		return err
 	}
@@ -102,7 +103,7 @@ func (this *SqliteCryptoRepository) Update(crypto *domain.Crypto) error {
 }
 
 func (this *SqliteCryptoRepository) Delete(id int) error {
-	query := `DELETE FROM crypt WHERE crypto.id = ?`
+	query := `DELETE FROM crypt WHERE id_crypto = ?`
 
 	if _, err := this.db.Exec(query, id); err != nil {
 		return err
