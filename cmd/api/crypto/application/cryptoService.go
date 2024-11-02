@@ -8,21 +8,25 @@ import (
 )
 
 type CryptoService struct {
-	Create   CryptoCreate
-	Read     CryptoRead
-	ReadByID CryptoReadByID
-	Update   CryptoUpdate
-	Delete   CryptoDelete
+	Create       CryptoCreate
+	Read         CryptoRead
+	ReadByID     CryptoReadByID
+	ReadByName   CryptoReadByName
+	Update       CryptoUpdate
+	UpdateByName CryptoUpdateByName
+	Delete       CryptoDelete
 }
 
 func NewCryptoService(db *sql.DB) *CryptoService {
 	var repo domain.CryptoRepository = infrastructure.NewSqliteCryptoRepository(db)
 
 	return &CryptoService{
-		Create:   *NewCryptoCreate(repo),
-		Read:     *NewCryptoRead(repo),
-		ReadByID: *NewCryptoReadByID(repo),
-		Update:   *NewCryptoUpdate(repo),
-		Delete:   *NewCryptoDelete(repo),
+		Create:       *NewCryptoCreate(repo),
+		Read:         *NewCryptoRead(repo),
+		ReadByID:     *NewCryptoReadByID(repo),
+		ReadByName:   *NewCryptoReadByName(repo),
+		Update:       *NewCryptoUpdate(repo),
+		UpdateByName: *NewCryptoUpdateByName(repo),
+		Delete:       *NewCryptoDelete(repo),
 	}
 }
