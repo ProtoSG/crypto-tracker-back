@@ -12,6 +12,8 @@ func NewQuoteRoutes(r *mux.Router, serviceContainer *services.ServiceContainer) 
 	r.HandleFunc("/quote", controller.Create).Methods("POST")
 	r.HandleFunc("/quote", controller.Read).Methods("GET")
 	r.HandleFunc("/quote/{id}", controller.ReadByID).Methods("GET")
+	r.HandleFunc("/quote/crypto/{id}", controller.ReadByIDCrypto).Methods("GET")
 	r.HandleFunc("/quote/{id}", controller.Update).Methods("PUT")
+	r.HandleFunc("/quote/crypto/{id}", controller.UpdateByIDCrypto).Methods("PUT")
 	r.HandleFunc("/quote/{id}", controller.Delete).Methods("DELETE")
 }
