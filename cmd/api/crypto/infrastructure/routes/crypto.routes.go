@@ -12,6 +12,8 @@ func NewCryptoRoutes(r *mux.Router, serviceContainer *services.ServiceContainer)
 	r.HandleFunc("/crypto", controller.Create).Methods("POST")
 	r.HandleFunc("/crypto", controller.Read).Methods("GET")
 	r.HandleFunc("/crypto/{id}", controller.ReadByID).Methods("GET")
+	r.HandleFunc("/crypto/name/{name}", controller.ReadByName).Methods("GET")
 	r.HandleFunc("/crypto/{id}", controller.Update).Methods("PUT")
+	r.HandleFunc("/crypto/name/{name}", controller.UpdateByName).Methods("PUT")
 	r.HandleFunc("/crypto/{id}", controller.Delete).Methods("DELETE")
 }
