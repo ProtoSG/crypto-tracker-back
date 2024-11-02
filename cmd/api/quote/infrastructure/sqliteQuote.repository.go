@@ -87,6 +87,29 @@ func (this *SqliteQuoteRepository) ReadByID(id int) (*domain.Quote, error) {
 	return quote, nil
 }
 
+func (this *SqliteQuoteRepository) ReadByIDCrypto(id int) (*domain.Quote, error) {
+	query := `SELECT * FROM quote WHERE id_crypto = ?`
+
+	quote := &domain.Quote{}
+
+	if err := this.db.QueryRow(
+		query,
+		id,
+	).Scan(
+		&quote.ID,
+		&quote.IDCrypto,
+		&quote.Price,
+		&quote.Volume24h,
+		&quote.PercentChange1h,
+		&quote.PercentChange24h,
+		&quote.PercentChange7d,
+	); err != nil {
+		return nil, err
+	}
+
+	return quote, nil
+}
+
 func (this *SqliteQuoteRepository) Update(quote *domain.Quote) error {
 	query := `UPDATE quote SET id_crypto = ?, price = ?, volume_24h = ?, percent_change_1h = ?, percent_change_24h = ?, percent_change_7d = ? WHERE id_quote = ?`
 
@@ -99,6 +122,24 @@ func (this *SqliteQuoteRepository) Update(quote *domain.Quote) error {
 		quote.PercentChange24h,
 		quote.PercentChange7d,
 		quote.ID,
+	); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (this *SqliteQuoteRepository) UpdateByIDCrypto(quote *domain.Quote) error {
+	query := `UPDATE quote SET price = ?, volume_24h = ?, percent_change_1h = ?, percent_change_24h = ?, percent_change_7d = ? WHERE id_crypto = ?`
+
+	if _, err := this.db.Exec(
+		query,
+		quote.Price,
+		quote.Volume24h,
+		quote.PercentChange1h,
+		quote.PercentChange24h,
+		quote.PercentChange7d,
+		quote.IDCrypto,
 	); err != nil {
 		return err
 	}
