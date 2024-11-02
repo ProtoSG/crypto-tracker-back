@@ -2,7 +2,6 @@ package application
 
 import (
 	"github.com/ProtoSG/crypto-tracker-back/cmd/api/quote/domain"
-	"github.com/ProtoSG/crypto-tracker-back/internal/utils"
 )
 
 type QuoteCreate struct {
@@ -13,11 +12,7 @@ func NewQuoteCreate(repo domain.QuoteRepository) *QuoteCreate {
 	return &QuoteCreate{repo}
 }
 
-func (this *QuoteCreate) Execute(id int, quote *domain.Quote) error {
-	if quote, _ := this.repo.ReadByID(id); quote == nil {
-		return utils.NewEntityNotFound(id, "Quote")
-	}
-
-	newQuote := domain.NewQuote(id, quote.IDCrypto, quote.Price, quote.Volume24h, quote.PercentChange1h, quote.PercentChange24h, quote.PercentChange7d)
-	return this.repo.Update(newQuote)
+func (this *QuoteCreate) Execute(id int, idCrypto int, price, volume24h, percentChange1h, percentChange24h, percentChange7d float64) error {
+	newQuote := domain.NewQuote(id, idCrypto, price, volume24h, percentChange1h, percentChange24h, percentChange7d)
+	return this.repo.Create(newQuote)
 }
