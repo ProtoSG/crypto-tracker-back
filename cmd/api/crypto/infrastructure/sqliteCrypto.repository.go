@@ -15,11 +15,12 @@ func NewSqliteCryptoRepository(db *sql.DB) *SqliteCryptoRepository {
 }
 
 func (this *SqliteCryptoRepository) Create(crypto *domain.Crypto) error {
-	query := `INSERT INTO crypto (name, symbol, slug, circulating_supply, cmc_rank) 
-    VALUES (?, ?, ? ,?, ?)
+	query := `INSERT INTO crypto (id_crypto, name, symbol, slug, circulating_supply, cmc_rank) 
+    VALUES (?, ?, ?, ? ,?, ?)
   `
 	_, err := this.db.Exec(
 		query,
+		crypto.ID,
 		crypto.Name,
 		crypto.Symbol,
 		crypto.Slug,
@@ -84,6 +85,28 @@ func (this *SqliteCryptoRepository) ReadByID(id int) (*domain.Crypto, error) {
 	return crypto, nil
 }
 
+func (this *SqliteCryptoRepository) ReadByName(name string) (*domain.Crypto, error) {
+	query := `SELECT * FROM crypto WHERE name = ?`
+
+	crypto := &domain.Crypto{}
+
+	if err := this.db.QueryRow(
+		query,
+		name,
+	).Scan(
+		&crypto.ID,
+		&crypto.Name,
+		&crypto.Symbol,
+		&crypto.Slug,
+		&crypto.CirculatingSupply,
+		&crypto.CmcRank,
+	); err != nil {
+		return nil, err
+	}
+
+	return crypto, nil
+}
+
 func (this *SqliteCryptoRepository) Update(crypto *domain.Crypto) error {
 	query := `UPDATE crypto SET name = ?, symbol = ?, slug = ?, circulating_supply = ?, cmc_rank = ? WHERE id_crypto = ?`
 
@@ -102,8 +125,25 @@ func (this *SqliteCryptoRepository) Update(crypto *domain.Crypto) error {
 	return nil
 }
 
+func (this *SqliteCryptoRepository) UpdateByName(crypto *domain.Crypto) error {
+	query := `UPDATE crypto SET symbol = ?, slug = ?, circulating_supply = ?, cmc_rank = ? WHERE name = ?`
+
+	if _, err := this.db.Exec(
+		query,
+		crypto.Symbol,
+		crypto.Slug,
+		crypto.CirculatingSupply,
+		crypto.CmcRank,
+		crypto.Name,
+	); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (this *SqliteCryptoRepository) Delete(id int) error {
-	query := `DELETE FROM crypt WHERE id_crypto = ?`
+	query := `DELETE FROM crypto WHERE id_crypto = ?`
 
 	if _, err := this.db.Exec(query, id); err != nil {
 		return err
