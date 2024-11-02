@@ -6,6 +6,7 @@ import (
 	"github.com/ProtoSG/crypto-tracker-back/cmd/api/crypto/domain"
 	"github.com/ProtoSG/crypto-tracker-back/internal/services"
 	"github.com/ProtoSG/crypto-tracker-back/internal/utils"
+	"github.com/gorilla/mux"
 )
 
 type CryptoController struct {
@@ -17,7 +18,7 @@ func NewCryptoController(serviceContainer *services.ServiceContainer) *CryptoCon
 }
 
 func (this *CryptoController) Create(w http.ResponseWriter, r *http.Request) {
-	crypto := domain.Crypto{}
+	crypto := &domain.Crypto{}
 	if err := utils.ReadJSON(r, crypto); err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err.Error())
 		return
@@ -81,6 +82,25 @@ func (this *CryptoController) ReadByID(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (this *CryptoController) ReadByName(w http.ResponseWriter, r *http.Request) {
+	name := mux.Vars(r)["name"]
+
+	crypto, err := this.serviceContainer.Crypto.ReadByName.Execute(name)
+	if err != nil {
+		if _, ok := err.(*utils.EntityNotFound); ok {
+			utils.WriteError(w, http.StatusNotFound, err.Error())
+		} else {
+			utils.WriteError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+
+	if err := utils.WriteJSON(w, http.StatusOK, crypto); err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+}
+
 func (this *CryptoController) Update(w http.ResponseWriter, r *http.Request) {
 	id, err := utils.GetID(w, r)
 	if err != nil {
@@ -95,6 +115,33 @@ func (this *CryptoController) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := this.serviceContainer.Crypto.Update.Execute(id, crypto); err != nil {
+		if _, ok := err.(*utils.EntityNotFound); ok {
+			utils.WriteError(w, http.StatusNotFound, err.Error())
+		} else {
+			utils.WriteError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+
+	data := map[string]string{
+		"message": "Crypto actualizado",
+	}
+	if err := utils.WriteJSON(w, http.StatusOK, data); err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+}
+
+func (this *CryptoController) UpdateByName(w http.ResponseWriter, r *http.Request) {
+	name := mux.Vars(r)["name"]
+
+	crypto := &domain.Crypto{}
+	if err := utils.ReadJSON(r, crypto); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := this.serviceContainer.Crypto.UpdateByName.Execute(name, crypto); err != nil {
 		if _, ok := err.(*utils.EntityNotFound); ok {
 			utils.WriteError(w, http.StatusNotFound, err.Error())
 		} else {
