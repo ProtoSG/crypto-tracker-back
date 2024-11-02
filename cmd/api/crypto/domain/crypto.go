@@ -13,6 +13,7 @@ func NewCrypto(id int, name, symbol, slug string, circulatingSupply float32, cmc
 	return &Crypto{
 		ID:                id,
 		Name:              name,
+		Symbol:            symbol,
 		Slug:              slug,
 		CirculatingSupply: circulatingSupply,
 		CmcRank:           cmcRank,
