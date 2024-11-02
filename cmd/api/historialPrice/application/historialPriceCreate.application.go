@@ -2,7 +2,6 @@ package application
 
 import (
 	"github.com/ProtoSG/crypto-tracker-back/cmd/api/historialPrice/domain"
-	"github.com/ProtoSG/crypto-tracker-back/internal/utils"
 )
 
 type HistorialPriceCreate struct {
@@ -13,11 +12,7 @@ func NewHistorialPriceCreate(repo domain.HistorialPriceRepository) *HistorialPri
 	return &HistorialPriceCreate{repo}
 }
 
-func (this *HistorialPriceCreate) Execute(id int, historialPrice *domain.HistorialPrice) error {
-	if historialPrice, _ := this.repo.ReadByID(id); historialPrice == nil {
-		return utils.NewEntityNotFound(id, "HistorialPrice")
-	}
-
-	newHistorialPrice := domain.NewHistorialPrice(id, historialPrice.IDCrypto, historialPrice.Price, historialPrice.Date)
+func (this *HistorialPriceCreate) Execute(id, idCrypto int, price float64, date string) error {
+	newHistorialPrice := domain.NewHistorialPrice(id, idCrypto, price, date)
 	return this.repo.Create(newHistorialPrice)
 }
