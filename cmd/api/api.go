@@ -8,6 +8,7 @@ import (
 	"github.com/ProtoSG/crypto-tracker-back/internal/routes"
 	"github.com/ProtoSG/crypto-tracker-back/internal/services"
 	"github.com/ProtoSG/crypto-tracker-back/internal/utils"
+	"github.com/gorilla/handlers"
 )
 
 type APIServer struct {
@@ -32,7 +33,7 @@ func (this *APIServer) Run() error {
 
 	svr := &http.Server{
 		Addr:    this.addr,
-		Handler: router,
+		Handler: handlers.CORS()(router),
 	}
 
 	if err := svr.ListenAndServe(); err != nil {
