@@ -1,5 +1,9 @@
 package domain
 
+import (
+	domainQuote "github.com/ProtoSG/crypto-tracker-back/cmd/api/quote/domain"
+)
+
 type Crypto struct {
 	ID                int     `json:"id"`
 	Name              string  `json:"name"`
@@ -18,4 +22,11 @@ func NewCrypto(id int, name, symbol, slug string, circulatingSupply float32, cmc
 		CirculatingSupply: circulatingSupply,
 		CmcRank:           cmcRank,
 	}
+}
+
+type CryptoResponse struct {
+	Crypto
+	Quote struct {
+		USD domainQuote.Quote `json:"USD"`
+	} `json:"quote"`
 }
