@@ -78,24 +78,31 @@ func (this *SqliteHistorialPriceRepository) ReadByID(id int) (*domain.HistorialP
 	return historialPrice, nil
 }
 
-func (this *SqliteHistorialPriceRepository) ReadByIDCrypto(id int) (*domain.HistorialPrice, error) {
+func (this *SqliteHistorialPriceRepository) ReadByIDCrypto(id int) ([]*domain.HistorialPrice, error) {
 	query := `SELECT * FROM historial_price WHERE id_crypto = ?`
 
-	historialPrice := &domain.HistorialPrice{}
-
-	if err := this.db.QueryRow(
-		query,
-		id,
-	).Scan(
-		&historialPrice.ID,
-		&historialPrice.IDCrypto,
-		&historialPrice.Price,
-		&historialPrice.Date,
-	); err != nil {
+	rows, err := this.db.Query(query, id)
+	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
-	return historialPrice, nil
+	var historialPrices []*domain.HistorialPrice
+	for rows.Next() {
+		historialPrice := &domain.HistorialPrice{}
+		if err := rows.Scan(
+			&historialPrice.ID,
+			&historialPrice.IDCrypto,
+			&historialPrice.Price,
+			&historialPrice.Date,
+		); err != nil {
+			return nil, err
+		}
+
+		historialPrices = append(historialPrices, historialPrice)
+	}
+
+	return historialPrices, nil
 }
 
 func (this *SqliteHistorialPriceRepository) Update(historialPrice *domain.HistorialPrice) error {
