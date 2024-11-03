@@ -13,7 +13,7 @@ func NewHistorialPriceReadByIDCrypto(repo domain.HistorialPriceRepository) *Hist
 	return &HistorialPriceReadByIDCrypto{repo}
 }
 
-func (this *HistorialPriceReadByIDCrypto) Execute(id int) (*domain.HistorialPrice, error) {
+func (this *HistorialPriceReadByIDCrypto) Execute(id int) ([]*domain.HistorialPrice, error) {
 	historialPrice, _ := this.repo.ReadByIDCrypto(id)
 	if historialPrice == nil {
 		return nil, utils.NewEntityNotFound(id, "HistorialPrice")
