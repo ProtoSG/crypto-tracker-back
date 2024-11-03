@@ -10,6 +10,6 @@ func NewCryptoRead(repo domain.CryptoRepository) *CryptoRead {
 	return &CryptoRead{repo}
 }
 
-func (this *CryptoRead) Execute() ([]*domain.Crypto, error) {
+func (this *CryptoRead) Execute() ([]*domain.CryptoResponse, error) {
 	return this.repo.Read()
 }
