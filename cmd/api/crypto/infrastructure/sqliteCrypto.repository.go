@@ -34,8 +34,25 @@ func (this *SqliteCryptoRepository) Create(crypto *domain.Crypto) error {
 	return nil
 }
 
-func (this *SqliteCryptoRepository) Read() ([]*domain.Crypto, error) {
-	query := `SELECT * FROM crypto`
+func (this *SqliteCryptoRepository) Read() ([]*domain.CryptoResponse, error) {
+	query := `
+    SELECT
+      c.id_crypto,
+      c.name,
+      c.symbol,
+      c.slug,
+      c.circulating_supply,
+      c.cmc_rank,
+      q.id_quote,
+      q.id_crypto,
+      q.price,
+      q.volume_24h,
+      q.percent_change_1h,
+      q.percent_change_24h,
+      q.percent_change_7d
+    FROM crypto c 
+    INNER JOIN quote q ON c.id_crypto = q.id_crypto;
+  `
 
 	rows, err := this.db.Query(query)
 	if err != nil {
@@ -43,9 +60,9 @@ func (this *SqliteCryptoRepository) Read() ([]*domain.Crypto, error) {
 	}
 	defer rows.Close()
 
-	var cryptos []*domain.Crypto
+	var cryptos []*domain.CryptoResponse
 	for rows.Next() {
-		crypto := &domain.Crypto{}
+		crypto := &domain.CryptoResponse{}
 		if err := rows.Scan(
 			&crypto.ID,
 			&crypto.Name,
@@ -53,6 +70,13 @@ func (this *SqliteCryptoRepository) Read() ([]*domain.Crypto, error) {
 			&crypto.Slug,
 			&crypto.CirculatingSupply,
 			&crypto.CmcRank,
+			&crypto.Quote.USD.ID,
+			&crypto.Quote.USD.IDCrypto,
+			&crypto.Quote.USD.Price,
+			&crypto.Quote.USD.Volume24h,
+			&crypto.Quote.USD.PercentChange1h,
+			&crypto.Quote.USD.PercentChange24h,
+			&crypto.Quote.USD.PercentChange7d,
 		); err != nil {
 			return nil, err
 		}
