@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
 type Env struct {
@@ -13,9 +11,6 @@ type Env struct {
 }
 
 func NewEnv() *Env {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
-	}
 
 	databaseURL, ok := getEnvVar("TURSO_DATABASE_URL")
 	if !ok {
