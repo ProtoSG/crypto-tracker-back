@@ -5,10 +5,13 @@ import (
 
 	"github.com/ProtoSG/crypto-tracker-back/cmd/api"
 	"github.com/ProtoSG/crypto-tracker-back/internal/db"
+	"github.com/ProtoSG/crypto-tracker-back/internal/services"
 )
 
 func main() {
-	startDB := *db.NewDB("crypto.db")
+	env := services.NewEnv()
+
+	startDB := *db.NewDB(env.URL)
 	db := startDB.SetupDB()
 
 	app := api.NewApi(":8080", db)
