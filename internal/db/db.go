@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
 type DB struct {
@@ -16,7 +16,7 @@ func NewDB(addr string) *DB {
 }
 
 func (this *DB) initDB() (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", this.addr)
+	db, err := sql.Open("libsql", this.addr)
 	if err != nil {
 		return nil, err
 	}
